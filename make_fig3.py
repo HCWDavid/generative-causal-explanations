@@ -17,13 +17,13 @@ from GCE import GenerativeCausalExplainer
 
 # --- parameters ---
 # dataset
-data_classes = [3, 8]
+data_classes = [1, 2]
 # classifier
-classifier_path = './pretrained_models/mnist_38_classifier'
+classifier_path = './pretrained_models/medmnist_12_classifier'#./pretrained_models/mnist_38_classifier'
 # vae
 K = 1
 L = 7
-train_steps = 8000
+train_steps = 800
 Nalpha = 25
 Nbeta = 100
 lam = 0.05
@@ -31,9 +31,9 @@ batch_size = 64
 lr = 5e-4
 # other
 randseed = 0
-gce_path = './pretrained_models/mnist_38_gce'
-retrain_gce = False # train explanatory VAE from scratch
-save_gce = False # save/overwrite pretrained explanatory VAE at gce_path
+gce_path = './pretrained_models/medmnist_12_gce'
+retrain_gce = True # train explanatory VAE from scratch
+save_gce = True # save/overwrite pretrained explanatory VAE at gce_path
 
 
 # --- initialize ---
@@ -45,9 +45,12 @@ ylabels = range(0,len(data_classes))
 
 
 # --- load data ---
-from load_mnist import load_mnist_classSelect
-X, Y, tridx = load_mnist_classSelect('train', data_classes, ylabels)
-vaX, vaY, vaidx = load_mnist_classSelect('val', data_classes, ylabels)
+# from load_mnist import load_mnist_classSelect
+# X, Y, tridx = load_mnist_classSelect('train', data_classes, ylabels)
+# vaX, vaY, vaidx = load_mnist_classSelect('val', data_classes, ylabels)
+from load_mnist import load_med_mnist_classSelect
+X, Y, tridx = load_med_mnist_classSelect('train', data_classes, ylabels)
+vaX, vaY, vaidx = load_med_mnist_classSelect('val', data_classes, ylabels)
 ntrain, nrow, ncol, c_dim = X.shape
 x_dim = nrow*ncol
 

@@ -1,6 +1,74 @@
 import os
 import numpy as np
 import scipy.io as sio
+from torch.utils.data import DataLoader
+from torchvision import transforms
+from medmnist import TissueMNIST
+def load_med_mnist_classSelect(dataset,class_use,newClass):
+
+    X, Y, idx = load_med_mnist_idx(dataset)
+    # num_classes = np.max(np.unique(Y)) - np.min(np.unique(Y)) + 1 # total number of classes
+    assert np.min(class_use) >= np.min(np.unique(Y)) and np.max(class_use) <= np.max(np.unique(Y)), 'class_use must be a subset of the dataset classes'
+    class_idx_total = np.zeros((0,0))
+    Y_use = Y
+
+    count_y = 0
+    for k in class_use:
+        class_idx = np.where(Y[:]==k)[0]
+        Y_use[class_idx] = newClass[count_y]
+        class_idx_total = np.append(class_idx_total,class_idx)
+        print(len(class_idx_total))
+        count_y = count_y +1
+
+    class_idx_total = np.sort(class_idx_total).astype(int)
+    # print(np.max(X), np.min(X))
+    X = X[class_idx_total,:,:,:]
+    Y = Y_use[class_idx_total]
+    # squeeze the channel dimension in Y
+    Y = np.squeeze(Y)
+    return X,Y,idx
+
+def load_med_mnist_idx(data_type):
+    transform = transforms.Compose([
+        transforms.ToTensor(),
+        # in trainning phase, the data shape order was permuted "batch_images_torch = batch_images_torch.permute(0,3,1,2).float()", we want to keep consistent with it:
+        transforms.Lambda(lambda x: x.permute(1, 2, 0)),  # Rearrange dimensions to PyTorch convention
+    
+        # Add other transformations if needed
+        ])
+    dataset_train = TissueMNIST(split='train', download=False, root='./datasets/medmnist', transform=transform)
+    dataset_val = TissueMNIST(split='val', download=False, root='./datasets/medmnist', transform=transform)
+    dataset_test = TissueMNIST(split='test', download=False, root='./datasets/medmnist', transform=transform)
+    # dataloader = DataLoader(dataset, batch_size=len(dataset), shuffle=False)
+    if data_type == 'train':
+        dataloader = DataLoader(dataset_train, batch_size=len(dataset_train), shuffle=False)
+    elif data_type == 'val':
+        dataloader = DataLoader(dataset_val, batch_size=len(dataset_val), shuffle=False)
+    elif data_type == 'test':
+        dataloader = DataLoader(dataset_test, batch_size=len(dataset_test), shuffle=False)
+    for batch in dataloader:
+        X, y = batch
+
+    X = X.numpy().astype(float)
+    y = y.numpy().astype(int)
+    # print(y)
+    idxUse = np.arange(0, y.shape[0])
+    seed = 73054772
+    np.random.seed(seed)
+    # np.random.shuffle(X)
+    # np.random.seed(seed)
+    # np.random.shuffle(y)
+    # np.random.seed(seed)
+    # np.random.shuffle(idxUse)
+
+    perm = np.random.permutation(len(X))
+
+    # Shuffle all arrays according to the permutation
+    X = X[perm]
+    y = y[perm]
+    idxUse = idxUse[perm]
+    return X, y, idxUse
+
 
 def load_mnist_idx(data_type):
        data_dir = 'datasets/mnist/'

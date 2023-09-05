@@ -14,8 +14,8 @@ import scipy.io as sio
 import os
 
 # --- options ---
-dataset = 'mnist'             # 'mnist' or 'fmnist'
-class_use = np.array([3,8])   # classes to select from dataset
+dataset = 'medmnist'             # 'mnist' or 'fmnist'
+class_use = np.array([1,2])   # classes to select from dataset
 batch_size = 64               # training batch size
 c_dim = 1                     # number of channels in the input image
 lr = 0.1                      # sgd learning rate
@@ -44,6 +44,10 @@ elif dataset == 'fmnist':
     trX, trY, tridx = load_fashion_mnist_classSelect('train',class_use,newClass)
     vaX, vaY, vaidx = load_fashion_mnist_classSelect('val',class_use,newClass)
     teX, teY, teidx = load_fashion_mnist_classSelect('test',class_use,newClass)
+elif dataset == 'medmnist':
+    trX, trY, tridx = load_med_mnist_classSelect('train',class_use,newClass)
+    vaX, vaY, vaidx = load_med_mnist_classSelect('val',class_use,newClass)
+    teX, teY, teidx = load_med_mnist_classSelect('test',class_use,newClass)
 else:
     print('dataset must be ''mnist'' or ''fmnist''!')
 
@@ -73,6 +77,7 @@ for epoch in range(0,epochs):
         
         optimizer.zero_grad()
         prob_output,output = classifier(batch_images_torch)
+        # print(output.shape, batch_labels.shape)
         loss = ce_loss(output,batch_labels)
         loss.backward()
         optimizer.step()

@@ -61,7 +61,9 @@ def plotExplanation(Xhats, yhats, save_path=None):
                 axs[isamp,iz].axis('off')
         axs[0,round(nz_sweep/2)-1].set_title('Sweep latent dimension %d' % (latent_dim+1))
         if save_path is not None:
-            plt.savefig('./%s_latentdim%d.svg' % (save_path,latent_dim+1), bbox_inches=0)
+            plt.savefig('./%s_latentdim%d.svg' % (save_path,latent_dim+1), dpi=300, bbox_inches='tight')
+            plt.savefig('./%s_latentdim%d.png' % (save_path,latent_dim+1), dpi=500, bbox_inches='tight')
+
 
 
 def outline_mask(ax, mask, bounds=(0,1,0,1), color=(0,0,0,0.25)):

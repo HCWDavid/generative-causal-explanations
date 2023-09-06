@@ -17,9 +17,11 @@ from GCE import GenerativeCausalExplainer
 
 # --- parameters ---
 # dataset
+dataset = 'medmnist'  # 'mnist' or 'fmnist' or 'medmnist'
 data_classes = [1, 2]
 # classifier
-classifier_path = './pretrained_models/medmnist_12_classifier'#./pretrained_models/mnist_38_classifier'
+classifier_path = f'./pretrained_models/{dataset}_{"".join([str(i) for i in data_classes])}_classifier'
+
 # vae
 K = 1
 L = 7
@@ -31,7 +33,7 @@ batch_size = 64
 lr = 5e-4
 # other
 randseed = 0
-gce_path = './pretrained_models/medmnist_12_gce'
+gce_path = f'./pretrained_models/{dataset}_{"".join([str(i) for i in data_classes])}_gce'
 retrain_gce = False # train explanatory VAE from scratch
 save_gce = False # save/overwrite pretrained explanatory VAE at gce_path
 
@@ -42,15 +44,24 @@ if randseed is not None:
     np.random.seed(randseed)
     torch.manual_seed(randseed)
 ylabels = range(0,len(data_classes))
+from load_mnist import load_med_mnist_classSelect, load_mnist_classSelect, load_fashion_mnist_classSelect
+if dataset == 'medmnist':
+    X, Y, tridx = load_med_mnist_classSelect('train', data_classes, ylabels)
+    vaX, vaY, vaidx = load_med_mnist_classSelect('val', data_classes, ylabels)
+elif dataset == 'mnist':
+    X, Y, tridx = load_mnist_classSelect('train', data_classes, ylabels)
+    vaX, vaY, vaidx = load_mnist_classSelect('val', data_classes, ylabels)
+elif dataset == 'fmnist':
+    X, Y, tridx = load_fashion_mnist_classSelect('train', data_classes, ylabels)
+    vaX, vaY, vaidx = load_fashion_mnist_classSelect('val', data_classes, ylabels)
 
 
 # --- load data ---
 # from load_mnist import load_mnist_classSelect
 # X, Y, tridx = load_mnist_classSelect('train', data_classes, ylabels)
 # vaX, vaY, vaidx = load_mnist_classSelect('val', data_classes, ylabels)
-from load_mnist import load_med_mnist_classSelect
-X, Y, tridx = load_med_mnist_classSelect('train', data_classes, ylabels)
-vaX, vaY, vaidx = load_med_mnist_classSelect('val', data_classes, ylabels)
+
+
 ntrain, nrow, ncol, c_dim = X.shape
 x_dim = nrow*ncol
 

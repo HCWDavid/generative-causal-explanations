@@ -14,7 +14,7 @@ import scipy.io as sio
 import os
 
 # --- options ---
-dataset = 'medmnist'             # 'mnist' or 'fmnist'
+dataset = 'mnist'             # 'mnist' or 'fmnist'
 class_use = np.array([1,2])   # classes to select from dataset
 batch_size = 64               # training batch size
 c_dim = 1                     # number of channels in the input image

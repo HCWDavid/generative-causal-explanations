@@ -14,10 +14,13 @@ import scipy.io as sio
 import os
 
 # --- options ---
-dataset = 'mnist'             # 'mnist' or 'fmnist'
+dataset = 'medmnist'             # 'mnist' or 'fmnist' or 'medmnist'
+type_med = 'blood'
+if dataset == 'medmnist':
+    dataset = dataset + '_' + type_med  
 class_use = np.array([1,2])   # classes to select from dataset
 batch_size = 64               # training batch size
-c_dim = 1                     # number of channels in the input image
+c_dim = 3                    # number of channels in the input image
 lr = 0.1                      # sgd learning rate
 momentum = 0.5                # sgd momentum term
 img_size = 28                 # size of each image dimension
@@ -44,10 +47,10 @@ elif dataset == 'fmnist':
     trX, trY, tridx = load_fashion_mnist_classSelect('train',class_use,newClass)
     vaX, vaY, vaidx = load_fashion_mnist_classSelect('val',class_use,newClass)
     teX, teY, teidx = load_fashion_mnist_classSelect('test',class_use,newClass)
-elif dataset == 'medmnist':
-    trX, trY, tridx = load_med_mnist_classSelect('train',class_use,newClass)
-    vaX, vaY, vaidx = load_med_mnist_classSelect('val',class_use,newClass)
-    teX, teY, teidx = load_med_mnist_classSelect('test',class_use,newClass)
+elif dataset.startswith('medmnist'):
+    trX, trY, tridx = load_med_mnist_classSelect('train',class_use,newClass,type_med=type_med)
+    vaX, vaY, vaidx = load_med_mnist_classSelect('val',class_use,newClass,type_med=type_med)
+    teX, teY, teidx = load_med_mnist_classSelect('test',class_use,newClass,type_med=type_med)
 else:
     print('dataset must be ''mnist'' or ''fmnist''!')
 
@@ -58,7 +61,7 @@ batch_idxs_val = len(vaX) // test_size
 ce_loss = nn.CrossEntropyLoss()
 #
 from models.CNN_classifier import CNN
-classifier = CNN(y_dim).to(device)
+classifier = CNN(y_dim, c_dim=c_dim).to(device)
 optimizer = torch.optim.SGD(classifier.parameters(), lr=lr, momentum=momentum)
 scheduler = StepLR(optimizer, step_size=1, gamma=gamma)
 #

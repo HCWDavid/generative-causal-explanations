@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 class CNN(nn.Module):
    
-    def __init__(self, y_dim):
+    def __init__(self, y_dim, c_dim=1):
         """
         Initialize classifier
 
@@ -12,7 +12,7 @@ class CNN(nn.Module):
         - y_dim : number of classes
         """
         super(CNN, self).__init__()
-        self.conv1 = nn.Conv2d(1, 32, 3, 1)
+        self.conv1 = nn.Conv2d(c_dim, 32, 3, 1)
         self.conv2 = nn.Conv2d(32, 64, 3, 1)
         self.dropout1 = nn.Dropout2d(0.25)
         self.dropout2 = nn.Dropout2d(0.5)

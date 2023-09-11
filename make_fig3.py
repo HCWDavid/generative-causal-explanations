@@ -17,7 +17,10 @@ from GCE import GenerativeCausalExplainer
 
 # --- parameters ---
 # dataset
-dataset = 'mnist'  # 'mnist' or 'fmnist' or 'medmnist'
+dataset = 'medmnist'  # 'mnist' or 'fmnist' or 'medmnist'
+type_med = 'blood'
+if dataset == 'medmnist':
+    dataset = dataset + '_' + type_med  
 data_classes = [1, 2]
 # classifier
 classifier_path = f'./pretrained_models/{dataset}_{"".join([str(i) for i in data_classes])}_classifier'
@@ -45,9 +48,9 @@ if randseed is not None:
     torch.manual_seed(randseed)
 ylabels = range(0,len(data_classes))
 from load_mnist import load_med_mnist_classSelect, load_mnist_classSelect, load_fashion_mnist_classSelect
-if dataset == 'medmnist':
-    X, Y, tridx = load_med_mnist_classSelect('train', data_classes, ylabels)
-    vaX, vaY, vaidx = load_med_mnist_classSelect('val', data_classes, ylabels)
+if dataset.startswith('medmnist'):
+    X, Y, tridx = load_med_mnist_classSelect('train', data_classes, ylabels, type_med=type_med)
+    vaX, vaY, vaidx = load_med_mnist_classSelect('val', data_classes, ylabels, type_med=type_med)
 elif dataset == 'mnist':
     X, Y, tridx = load_mnist_classSelect('train', data_classes, ylabels)
     vaX, vaY, vaidx = load_mnist_classSelect('val', data_classes, ylabels)
@@ -68,7 +71,7 @@ x_dim = nrow*ncol
 
 # --- load classifier ---
 from models.CNN_classifier import CNN
-classifier = CNN(len(data_classes)).to(device)
+classifier = CNN(len(data_classes), c_dim=c_dim).to(device)
 checkpoint = torch.load('%s/model.pt' % classifier_path, map_location=device)
 classifier.load_state_dict(checkpoint['model_state_dict_classifier'])
 

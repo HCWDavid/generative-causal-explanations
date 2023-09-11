@@ -44,7 +44,16 @@ columns correspond to latent values in sweep.
 :param save_path: if provided, will export to {<save_path>_latentdimX.svg}
 """
 def plotExplanation(Xhats, yhats, save_path=None):
-    cols = [[0.047, 0.482, 0.863], [1.000, 0.761, 0.039], [0.561, 0.788, 0.227]]
+    cols = [
+    [0.047, 0.482, 0.863],  # Blue
+    [1.000, 0.761, 0.039],  # Yellow
+    [0.561, 0.788, 0.227],  # Green
+    [0.898, 0.121, 0.388],  # Pink
+    [0.121, 0.388, 0.898],  # Light Blue
+    [0.745, 0.243, 0.862],  # Purple
+    [0.960, 0.498, 0.090],  # Orange
+    [0.482, 0.047, 0.863]   # Dark Blue
+]
     border_size = 3
     (nsamp, z_dim, nz_sweep, nrows, ncols, nchans) = Xhats.shape
     

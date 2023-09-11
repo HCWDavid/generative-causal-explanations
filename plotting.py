@@ -44,25 +44,34 @@ columns correspond to latent values in sweep.
 :param save_path: if provided, will export to {<save_path>_latentdimX.svg}
 """
 def plotExplanation(Xhats, yhats, save_path=None):
-    cols = [[0.047,0.482,0.863],[1.000,0.761,0.039],[0.561,0.788,0.227]]
+    cols = [[0.047, 0.482, 0.863], [1.000, 0.761, 0.039], [0.561, 0.788, 0.227]]
     border_size = 3
-    (nsamp,z_dim,nz_sweep,nrows,ncols,nchans) = Xhats.shape
+    (nsamp, z_dim, nz_sweep, nrows, ncols, nchans) = Xhats.shape
+    
     for latent_dim in range(z_dim):
         fig, axs = plt.subplots(nsamp, nz_sweep)
         for isamp in range(nsamp):
             for iz in range(nz_sweep):
-                img = Xhats[isamp,latent_dim,iz,:,:,0].squeeze()
-                yhat = int(yhats[isamp,latent_dim,iz])
-                img_bordered = np.tile(np.expand_dims(np.array(cols[yhat]),(0,1)),
-                    (nrows+2*border_size,ncols+2*border_size,1))
-                img_bordered[border_size:-border_size,border_size:-border_size,:] = \
-                    np.tile(np.expand_dims(img,2),(1,1,3))
-                axs[isamp,iz].imshow(img_bordered, interpolation='nearest')
-                axs[isamp,iz].axis('off')
-        axs[0,round(nz_sweep/2)-1].set_title('Sweep latent dimension %d' % (latent_dim+1))
+                if nchans == 1:  # Grayscale
+                    img = Xhats[isamp, latent_dim, iz, :, :, 0].squeeze()
+                    img_bordered = np.tile(np.expand_dims(np.array(cols[int(yhats[isamp, latent_dim, iz])]), (0, 1)),
+                                           (nrows + 2 * border_size, ncols + 2 * border_size, 1))
+                    img_bordered[border_size:-border_size, border_size:-border_size, :] = \
+                        np.tile(np.expand_dims(img, 2), (1, 1, 3))
+                else:  # RGB
+                    img = Xhats[isamp, latent_dim, iz, :, :, :].squeeze()
+                    img_bordered = np.tile(np.expand_dims(np.array(cols[int(yhats[isamp, latent_dim, iz])]), (0, 1)),
+                                           (nrows + 2 * border_size, ncols + 2 * border_size, 1))
+                    img_bordered[border_size:-border_size, border_size:-border_size, :] = img
+                
+                axs[isamp, iz].imshow(img_bordered.astype(np.float32), interpolation='nearest')
+                axs[isamp, iz].axis('off')
+        
+        axs[0, round(nz_sweep / 2) - 1].set_title('Sweep latent dimension %d' % (latent_dim + 1))
+        
         if save_path is not None:
-            plt.savefig('./%s_latentdim%d.svg' % (save_path,latent_dim+1), dpi=300, bbox_inches='tight')
-            plt.savefig('./%s_latentdim%d.png' % (save_path,latent_dim+1), dpi=500, bbox_inches='tight')
+            plt.savefig(f'./{save_path}_latentdim{latent_dim+1}.svg', dpi=300, bbox_inches='tight')
+            plt.savefig(f'./{save_path}_latentdim{latent_dim+1}.png', dpi=500, bbox_inches='tight')
 
 
 

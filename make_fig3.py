@@ -102,7 +102,7 @@ if retrain_gce:
             'randseed' : randseed, 'traininfo' : traininfo})
 else: # load pretrained model
     gce = torch.load(os.path.join(gce_path,'model.pt'), map_location=device)
-
+    gce.device = device
 
 # --- compute final information flow ---
 I = gce.informationFlow()

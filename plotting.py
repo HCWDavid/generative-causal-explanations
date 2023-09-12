@@ -79,7 +79,7 @@ def plotExplanation(Xhats, yhats, save_path=None):
         axs[0, round(nz_sweep / 2) - 1].set_title('Sweep latent dimension %d' % (latent_dim + 1))
         
         if save_path is not None:
-            plt.savefig(f'./{save_path}_latentdim{latent_dim+1}.svg', dpi=300, bbox_inches='tight')
+            # plt.savefig(f'./{save_path}_latentdim{latent_dim+1}.svg', dpi=300, bbox_inches='tight')
             plt.savefig(f'./{save_path}_latentdim{latent_dim+1}.png', dpi=500, bbox_inches='tight')
 
 

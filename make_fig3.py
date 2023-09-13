@@ -21,7 +21,7 @@ dataset = 'medmnist'  # 'mnist' or 'fmnist' or 'medmnist'
 type_med = 'blood'
 if dataset == 'medmnist':
     dataset = dataset + '_' + type_med  
-data_classes = [1, 2, 3, 4]
+data_classes = [1, 2]
 # classifier
 classifier_path = f'./pretrained_models/{dataset}_{"".join([str(i) for i in data_classes])}_classifier'
 
@@ -37,8 +37,8 @@ lr = 5e-4
 # other
 randseed = 0
 gce_path = f'./pretrained_models/{dataset}_{"".join([str(i) for i in data_classes])}_gce'
-retrain_gce = False # train explanatory VAE from scratch
-save_gce = False # save/overwrite pretrained explanatory VAE at gce_path
+retrain_gce = True # train explanatory VAE from scratch
+save_gce = True # save/overwrite pretrained explanatory VAE at gce_path
 
 
 # --- initialize ---

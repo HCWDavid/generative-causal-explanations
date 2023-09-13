@@ -18,7 +18,7 @@ dataset = 'medmnist'             # 'mnist' or 'fmnist' or 'medmnist'
 type_med = 'blood'
 if dataset == 'medmnist':
     dataset = dataset + '_' + type_med  
-class_use = np.array([1,2, 3, 4])   # classes to select from dataset
+class_use = np.array([1,2])   # classes to select from dataset
 batch_size = 64               # training batch size
 c_dim = 3                    # number of channels in the input image
 lr = 0.1                      # sgd learning rate

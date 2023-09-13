@@ -112,11 +112,19 @@ print(Is[:K])
 print('Information flow of L=%d noncausal factors on classifier output:' % L)
 print(Is[K:])
 
+# --- draw sample from each class and visualize---
+sample_indices = np.concatenate([np.where(vaY == i)[0][:1] for i in range(len(data_classes))])
+x_each_class = torch.from_numpy(vaX[sample_indices])
+plotting.explain_sample(x_each_class, save_path='figs/fig3')
+    
 
 # --- generate explanation and create figure ---
 sample_ind = np.concatenate((np.where(vaY == 0)[0][:4],
                              np.where(vaY == 1)[0][:4]))
 x = torch.from_numpy(vaX[sample_ind])
+
+# quick check on x min and max:
+print('x min: %f, max: %f' % (x.min(), x.max()))
 zs_sweep = [-3., -2., -1., 0., 1., 2., 3.]
 Xhats, yhats = gce.explain(x, zs_sweep)
 plotting.plotExplanation(1.-Xhats, yhats, save_path='figs/fig3')

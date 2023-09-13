@@ -200,7 +200,6 @@ class GenerativeCausalExplainer:
                     yhats[isamp,latent_dim,iz] = yhat
         return Xhats, yhats
 
-
     """
     Compute the information flow between latent factors and classifier
     output, I(z; Yhat).

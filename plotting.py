@@ -32,6 +32,26 @@ def plotsurface(ax, x, y, Z, clim=None):
                    vmax=clim[1])
     return im
 
+def explain_sample(x, save_path=None):
+    # subplot for each x that has
+    assert len(x.shape) == 4
+    (nsamples,nrows,ncols,nchans) = x.shape
+    fig, axs = plt.subplots(1, nsamples)
+    for isamp,index in enumerate(range(nsamples)):
+        if nchans == 1:
+            axs[isamp].imshow(x[isamp,:,:,0], cmap='gray')
+        else:
+            axs[isamp].imshow(x[isamp,:,:,:])
+        # label for each subplot:
+        axs[isamp].set_title('%d' % index)
+        axs[isamp].axis('off')
+    if save_path is not None:
+        plt.savefig(f'./{save_path}_samples_all_classes.png', dpi=500, bbox_inches='tight')
+    return fig, axs
+
+        
+
+
 
 """
 plotExplanation - plot explanation created by GCE.explain().

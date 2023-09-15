@@ -13,7 +13,7 @@ import torch
 import util
 import plotting
 from GCE import GenerativeCausalExplainer
-
+from captum.attr import Saliency
 
 # --- parameters ---
 # dataset
@@ -39,7 +39,7 @@ randseed = 0
 gce_path = f'./pretrained_models/{dataset}_{"".join([str(i) for i in data_classes])}_gce'
 retrain_gce = False # train explanatory VAE from scratch
 save_gce = False # save/overwrite pretrained explanatory VAE at gce_path
-
+show_heatmap = True
 
 # --- initialize ---
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -127,4 +127,19 @@ x = torch.from_numpy(vaX[sample_ind])
 print('x min: %f, max: %f' % (x.min(), x.max()))
 zs_sweep = [-3., -2., -1., 0., 1., 2., 3.]
 Xhats, yhats = gce.explain(x, zs_sweep)
-plotting.plotExplanation(1.-Xhats, yhats, save_path='figs/fig3')
+if show_heatmap:
+    def classifier_wrapper(*args, **kwargs):
+        prob_out, out = gce.classifier(*args, **kwargs)
+        return out
+    attr_method = Saliency(classifier_wrapper) #.reshape(8 * 8 * 7, 28, 28, 3) 
+    #.permute(0,3,1,2)
+    reshaped_Xhats =torch.tensor(Xhats).reshape(-1, nrow, ncol, c_dim).permute(0,3,1,2).float().to(device)
+
+    reshaped_yhats = torch.tensor(yhats).reshape(-1).long().to(device)
+    attributions = attr_method.attribute(reshaped_Xhats, target=reshaped_yhats)
+    # permute(0,2,3,1) back
+    
+    Xhats_attributions = attributions.permute(0,2,3,1).reshape(*Xhats.shape).detach().cpu().numpy()
+    print(Xhats_attributions.shape)
+
+plotting.plotExplanation(Xhats, yhats,heatmaps=Xhats_attributions, save_path='figs/fig3') # it was 1. - Xhats

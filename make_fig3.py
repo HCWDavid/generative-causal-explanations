@@ -17,18 +17,18 @@ from captum.attr import Saliency
 
 # --- parameters ---
 # dataset
-dataset = 'medmnist'  # 'mnist' or 'fmnist' or 'medmnist'
+dataset = 'mnist'  # 'mnist' or 'fmnist' or 'medmnist'
 type_med = 'blood'
 if dataset == 'medmnist':
     dataset = dataset + '_' + type_med  
 data_classes = [1, 2]
 # classifier
-classifier_path = f'./pretrained_models/{dataset}_{"".join([str(i) for i in data_classes])}_classifier'
+classifier_path = f'./pretrained_models/{dataset}_{"".join([str(i) for i in data_classes])}_classifier_bad'
 
 # vae
 K = len(data_classes) - 1
 L = 7
-train_steps = 800
+train_steps = 8000
 Nalpha = 25
 Nbeta = 100
 lam = 0.05
@@ -36,9 +36,9 @@ batch_size = 64
 lr = 5e-4
 # other
 randseed = 0
-gce_path = f'./pretrained_models/{dataset}_{"".join([str(i) for i in data_classes])}_gce'
-retrain_gce = False # train explanatory VAE from scratch
-save_gce = False # save/overwrite pretrained explanatory VAE at gce_path
+gce_path = f'./pretrained_models/{dataset}_{"".join([str(i) for i in data_classes])}_gce_bad'
+retrain_gce = True # train explanatory VAE from scratch
+save_gce = True # save/overwrite pretrained explanatory VAE at gce_path
 show_heatmap = True
 
 # --- initialize ---
